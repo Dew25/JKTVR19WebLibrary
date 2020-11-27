@@ -5,25 +5,29 @@
  */
 package servlets;
 
+import entity.Book;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import session.BookFacade;
 
 /**
  *
  * @author Melnikov
  */
 @WebServlet(name = "MyServlet", urlPatterns = {
-    "/MyServlet",
-    "/Page1"
+    "/addBook",
+    "/createBook"
         
 })
 public class MyServlet extends HttpServlet {
-
+    @EJB
+    private BookFacade bookFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -36,13 +40,31 @@ public class MyServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String path = request.getServletPath();
-        if("/MyServlet".equals(path)){
-            request.setAttribute("info", "Привет друзья!");
-            request.getRequestDispatcher("/WEB-INF/myServlet.jsp").forward(request, response);
-        }else if("/Page1".equals(path)){
-            request.setAttribute("info", "Этот текст создан в сервлете");
-            request.getRequestDispatcher("/WEB-INF/page1.jsp").forward(request, response);
+        switch (path) {
+            case "/addBook":
+                request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
+                break;
+            case "/createBook":
+                String name = request.getParameter("name");
+                String author = request.getParameter("author");
+                String publishedYear = request.getParameter("publishedYear");
+                if("".equals(name) || name == null
+                        || "".equals(author) || author == null
+                        || "".equals(publishedYear) || publishedYear == null){
+                    request.setAttribute("name", name);
+                    request.setAttribute("author", author);
+                    request.setAttribute("publishedYear", publishedYear);
+                    request.setAttribute("info", "Заполните все поля");
+                    request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
+                    break;
+                }
+                Book book = new Book(name, author, publishedYear);
+                bookFacade.create(book);
+                request.setAttribute("info", "Данные книги \"" + book.getName() + "\" получены");
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                break;
         }
     }
 

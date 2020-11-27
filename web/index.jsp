@@ -1,6 +1,6 @@
 <%-- 
-    Document   : page1
-    Created on : Nov 24, 2020, 10:43:02 AM
+    Document   : index
+    Created on : Nov 27, 2020, 9:14:10 AM
     Author     : Melnikov
 --%>
 
@@ -9,12 +9,12 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>JSP Page</title>
+    <title>JKTVR19WebLibrary</title>
   </head>
   <body>
-    <div>Привет от Page1</div>
+    <h1>Наша библиотека</h1>
     <p>${info}</p>
-    <br>
-    <a href="index.html">Home</a>
+    <a href="addBook">Добавить книгу</a><br>
+    
   </body>
 </html>
