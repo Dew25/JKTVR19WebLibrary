@@ -25,6 +25,7 @@ package servlets;
 
 import entity.Book;
 import java.io.IOException;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +40,8 @@ import session.BookFacade;
  */
 @WebServlet(name = "MyServlet", urlPatterns = {
     "/addBook",
-    "/createBook"
+    "/createBook",
+    "/listBooks"
         
 })
 public class MyServlet extends HttpServlet {
@@ -81,6 +83,11 @@ public class MyServlet extends HttpServlet {
                 bookFacade.create(book);
                 request.setAttribute("info", "Книга \"" + book.getName() + "\" добавлена");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
+                break;
+            case "/listBooks":
+                List<Book> listBooks = bookFacade.findAll();
+                request.setAttribute("listBooks", listBooks);
+                request.getRequestDispatcher("/listBooks.jsp").forward(request, response);
                 break;
         }
     }

@@ -15,6 +15,7 @@
     <h1>Наша библиотека</h1>
     <p>${info}</p>
     <a href="addBook">Добавить книгу</a><br>
+    <a href="listBooks">Список книг</a><br>
     
   </body>
 </html>
