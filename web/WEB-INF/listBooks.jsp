@@ -4,6 +4,7 @@
     Author     : Melnikov
 --%>
 
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -14,13 +15,13 @@
   </head>
   <body>
     <h1>Список книг:</h1>
-        <ul>
+        <ol>
           <c:forEach var="book" items="${listBooks}" varStatus="status">
                 <li>
-                    ${status.index}. ${book.name}. ${book.author}. ${book.publishedYear}
+                    ${book.name}. ${book.author}. ${book.publishedYear}
                 </li>
           </c:forEach>
-        </ul>
+        </ol>
     
   </body>
 </html>
