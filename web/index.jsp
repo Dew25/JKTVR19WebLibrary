@@ -14,9 +14,11 @@
   <body>
     <h1>Наша библиотека</h1>
     <p>${info}</p>
+    <a href="logout">Выход</a><br>
+    <a href="loginForm">Вход</a><br>
     <a href="addBook">Добавить книгу</a><br>
     <a href="listBooks">Список книг</a><br>
-    <a href="addReader">Добавить читателя</a><br>
+    <a href="registrationForm">Добавить читателя</a><br>
     <a href="listReaders">Список читателей</a><br>
     <a href="takeOnBookForm">Выдать книгу</a><br>
     <a href="returnBookForm">Вернуть книгу</a><br>

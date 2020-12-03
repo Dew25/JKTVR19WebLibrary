@@ -17,8 +17,9 @@
  *    отдать страничку jsp с данными клиенту. 
  *    Например:
  *    request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
- * 10. Для получения объектов классов "фасадов" использовать аннотацию @EJB 
- *    в поле класса "MyServlet"
+ * 10. Чтобы получить объект класса -фасада, необходимо применять аннотацию @EJB 
+ *    для полей класса "MyServlet". С помощью этой аннотации контейнер сервера приложений внедрит
+ *    указанный объект в поле.  
  * 
  */
 package servlets;
@@ -26,6 +27,7 @@ package servlets;
 import entity.Book;
 import entity.History;
 import entity.Reader;
+import entity.User;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -35,6 +37,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import session.BookFacade;
 import session.HistoryFacade;
 import session.ReaderFacade;
@@ -47,8 +50,6 @@ import session.ReaderFacade;
     "/addBook",
     "/createBook",
     "/listBooks",
-    "/addReader",
-    "/createReader",
     "/listReaders",
     "/takeOnBookForm",
     "/takeOnBook",
@@ -77,6 +78,18 @@ public class MyServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
+        HttpSession httpSession = request.getSession(false);
+        if(httpSession == null){
+            request.setAttribute("info", "Авторизуйтесь, пожалуйста!");
+            request.getRequestDispatcher("/loginForm").forward(request, response);
+            return;
+        }
+        User authUser = (User) httpSession.getAttribute("user");
+        if(authUser == null){
+            request.setAttribute("info", "Авторизуйтесь, пожалуйста!");
+            request.getRequestDispatcher("/loginForm").forward(request, response);
+            return;
+        }
         String path = request.getServletPath();
         switch (path) {
             case "/addBook":
@@ -106,28 +119,7 @@ public class MyServlet extends HttpServlet {
                 request.setAttribute("listBooks", listBooks);
                 request.getRequestDispatcher("/WEB-INF/listBooks.jsp").forward(request, response);
                 break;
-            case "/addReader":
-                request.getRequestDispatcher("/WEB-INF/addReaderForm.jsp").forward(request, response);
-                break;
-            case "/createReader":
-                String firstname = request.getParameter("firstname");
-                String lastname = request.getParameter("lastname");
-                String phone = request.getParameter("phone");
-                if("".equals(firstname) || firstname == null
-                        || "".equals(lastname) || lastname == null
-                        || "".equals(phone) || phone == null){
-                    request.setAttribute("firstname", firstname);
-                    request.setAttribute("lastname", lastname);
-                    request.setAttribute("phone", phone);
-                    request.setAttribute("info", "Заполните все поля");
-                    request.getRequestDispatcher("/WEB-INF/addReaderForm.jsp").forward(request, response);
-                    break;
-                }
-                Reader reader = new Reader(firstname, lastname, phone);
-                readerFacade.create(reader);
-                request.setAttribute("info", "Читатель \"" + reader.getFirstname() +" "+ reader.getLastname()+ "\" добавлен");
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
-                break;
+            
             case "/listReaders":
                 List<Reader> listReaders = readerFacade.findAll();
                 request.setAttribute("listReaders", listReaders);
@@ -144,7 +136,7 @@ public class MyServlet extends HttpServlet {
                 String bookId = request.getParameter("bookId");
                 book = bookFacade.find(Long.parseLong(bookId));
                 String readerId = request.getParameter("readerId");
-                reader = readerFacade.find(Long.parseLong(readerId));
+                Reader reader = readerFacade.find(Long.parseLong(readerId));
                 History history = new History(book, reader, new GregorianCalendar().getTime(), null);
                 historyFacade.create(history);
                 request.setAttribute("info", "Книга \""+book.getName()+"\" выдана читателю");
