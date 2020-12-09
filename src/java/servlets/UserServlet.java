@@ -46,19 +46,15 @@ import session.ReaderFacade;
  *
  * @author Melnikov
  */
-@WebServlet(name = "MyServlet", urlPatterns = {
-    "/addBook",
-    "/createBook",
+@WebServlet(name = "UserServlet", urlPatterns = {
     "/listBooks",
-    "/listReaders",
     "/takeOnBookForm",
     "/takeOnBook",
     "/returnBookForm",
     "/returnBook",
     
-        
 })
-public class MyServlet extends HttpServlet {
+public class UserServlet extends HttpServlet {
     @EJB
     private BookFacade bookFacade;
     @EJB
@@ -92,49 +88,21 @@ public class MyServlet extends HttpServlet {
         }
         String path = request.getServletPath();
         switch (path) {
-            case "/addBook":
-                request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
-                break;
-            case "/createBook":
-                String name = request.getParameter("name");
-                String author = request.getParameter("author");
-                String publishedYear = request.getParameter("publishedYear");
-                if("".equals(name) || name == null
-                        || "".equals(author) || author == null
-                        || "".equals(publishedYear) || publishedYear == null){
-                    request.setAttribute("name", name);
-                    request.setAttribute("author", author);
-                    request.setAttribute("publishedYear", publishedYear);
-                    request.setAttribute("info", "Заполните все поля");
-                    request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
-                    break;
-                }
-                Book book = new Book(name, author, publishedYear);
-                bookFacade.create(book);
-                request.setAttribute("info", "Книга \"" + book.getName() + "\" добавлена");
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
-                break;
             case "/listBooks":
                 List<Book> listBooks = bookFacade.findAll();
                 request.setAttribute("listBooks", listBooks);
                 request.getRequestDispatcher("/WEB-INF/listBooks.jsp").forward(request, response);
                 break;
-            
-            case "/listReaders":
-                List<Reader> listReaders = readerFacade.findAll();
-                request.setAttribute("listReaders", listReaders);
-                request.getRequestDispatcher("/WEB-INF/listReaders.jsp").forward(request, response);
-                break;
             case "/takeOnBookForm":
                 listBooks = bookFacade.findAll();
                 request.setAttribute("listBooks", listBooks);
-                listReaders = readerFacade.findAll();
+                List<Reader> listReaders = readerFacade.findAll();
                 request.setAttribute("listReaders", listReaders);
                 request.getRequestDispatcher("/WEB-INF/takeOnBookForm.jsp").forward(request, response);
                 break;
             case "/takeOnBook":
                 String bookId = request.getParameter("bookId");
-                book = bookFacade.find(Long.parseLong(bookId));
+                Book book = bookFacade.find(Long.parseLong(bookId));
                 String readerId = request.getParameter("readerId");
                 Reader reader = readerFacade.find(Long.parseLong(readerId));
                 History history = new History(book, reader, new GregorianCalendar().getTime(), null);
