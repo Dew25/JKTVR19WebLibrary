@@ -24,6 +24,8 @@ import session.ReaderFacade;
 @WebServlet(name = "ManagerServlet", urlPatterns = {
     "/addBook",
     "/createBook",
+    "/editBookForm",
+    "/editBook",
     "/listReaders",
         
 })
@@ -87,6 +89,33 @@ public class ManagerServlet extends HttpServlet {
                 bookFacade.create(book);
                 request.setAttribute("info", "Книга \"" + book.getName() + "\" добавлена");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
+                break;
+            case "/editBookForm":
+                String bookId = request.getParameter("bookId");
+                book = bookFacade.find(Long.parseLong(bookId));
+                request.setAttribute("book", book);
+                request.getRequestDispatcher("/WEB-INF/editBookForm.jsp").forward(request, response);
+                break;
+            case "/editBook":
+                bookId = request.getParameter("bookId");
+                name = request.getParameter("name");
+                author = request.getParameter("author");
+                publishedYear = request.getParameter("publishedYear");
+                if("".equals(name) || name == null
+                        || "".equals(author) || author == null
+                        || "".equals(publishedYear) || publishedYear == null){
+                    request.setAttribute("info", "Поля не должны быть пустыми");
+                    request.getRequestDispatcher("/editBookForm").forward(request, response);
+                    break;
+                }
+                book = bookFacade.find(Long.parseLong(bookId));
+                book.setName(name);
+                book.setAuthor(author);
+                book.setPublishedYear(publishedYear);
+                bookFacade.edit(book);
+                request.setAttribute("bookId", bookId);
+                request.setAttribute("info", "Книга отредактирована");
+                request.getRequestDispatcher("/editBookForm").forward(request, response);
                 break;
             case "/listReaders":
                 List<Reader> listReaders = readerFacade.findAll();

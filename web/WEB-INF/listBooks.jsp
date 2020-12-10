@@ -18,7 +18,7 @@
         <ol>
           <c:forEach var="book" items="${listBooks}" varStatus="status">
                 <li>
-                    ${book.name}. ${book.author}. ${book.publishedYear}
+                    ${book.name}. ${book.author}. ${book.publishedYear} <a href="editBookForm?bookId=${book.id}">Изменить</a>
                 </li>
           </c:forEach>
         </ol>
