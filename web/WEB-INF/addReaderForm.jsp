@@ -1,17 +1,7 @@
-<%-- 
-    Document   : page1
-    Created on : Nov 24, 2020, 10:43:02 AM
-    Author     : Melnikov
---%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Добавление читателя</title>
-  </head>
-  <body>
+
     <div>Добавить читателя</div>
     <p>${info}</p>
     <br>
@@ -24,5 +14,4 @@
         Пароль: <input type="password" name="password" value="${password}"><br>
         <input type="submit" name="submit" value="Добавить читателя">
     </form>
-  </body>
-</html>
+  
