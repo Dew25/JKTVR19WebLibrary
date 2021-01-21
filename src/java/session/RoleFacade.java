@@ -5,20 +5,17 @@
  */
 package session;
 
-import entity.History;
-import entity.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import entity.Role;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
 @Stateless
-public class HistoryFacade extends AbstractFacade<History> {
+public class RoleFacade extends AbstractFacade<Role> {
 
     @PersistenceContext(unitName = "JKTVR19WebLibraryPU")
     private EntityManager em;
@@ -28,17 +25,17 @@ public class HistoryFacade extends AbstractFacade<History> {
         return em;
     }
 
-    public HistoryFacade() {
-        super(History.class);
+    public RoleFacade() {
+        super(Role.class);
     }
 
-    public List<History> findReadBook(Reader reader) {
+    public Role findByName(String roleName) {
         try {
-            return em.createQuery("SELECT h FROM History h WHERE h.returnDate = NULL AND h.reader = :reader")
-                    .setParameter("reader", reader)
-                    .getResultList();
+            return (Role) em.createQuery("SELECT role FROM Role role WHERE role.roleName = :roleName")
+                    .setParameter("roleName", roleName)
+                    .getSingleResult();
         } catch (Exception e) {
-            return new ArrayList<>();
+            return null;
         }
     }
     

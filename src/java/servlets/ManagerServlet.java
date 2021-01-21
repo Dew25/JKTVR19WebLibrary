@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import session.BookFacade;
 import session.HistoryFacade;
 import session.ReaderFacade;
+import session.UserRolesFacade;
 
 /**
  *
@@ -36,6 +37,7 @@ public class ManagerServlet extends HttpServlet {
     private ReaderFacade readerFacade;
     @EJB
     private HistoryFacade historyFacade;
+    @EJB private UserRolesFacade userRolesFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -61,7 +63,8 @@ public class ManagerServlet extends HttpServlet {
             request.getRequestDispatcher("/loginForm").forward(request, response);
             return;
         }
-        if(!"ivan".equals(authUser.getLogin())){
+        boolean isRole = userRolesFacade.isRole("MANAGER",authUser);
+        if(!isRole){
             request.setAttribute("info", "У вас нет прав для доступа!");
             request.getRequestDispatcher("/loginForm").forward(request, response);
             return;

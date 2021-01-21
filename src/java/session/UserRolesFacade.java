@@ -5,20 +5,18 @@
  */
 package session;
 
-import entity.History;
-import entity.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import entity.User;
+import entity.UserRoles;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
 @Stateless
-public class HistoryFacade extends AbstractFacade<History> {
+public class UserRolesFacade extends AbstractFacade<UserRoles> {
 
     @PersistenceContext(unitName = "JKTVR19WebLibraryPU")
     private EntityManager em;
@@ -28,17 +26,19 @@ public class HistoryFacade extends AbstractFacade<History> {
         return em;
     }
 
-    public HistoryFacade() {
-        super(History.class);
+    public UserRolesFacade() {
+        super(UserRoles.class);
     }
 
-    public List<History> findReadBook(Reader reader) {
+    public boolean isRole(String roleName, User user) {
         try {
-            return em.createQuery("SELECT h FROM History h WHERE h.returnDate = NULL AND h.reader = :reader")
-                    .setParameter("reader", reader)
-                    .getResultList();
+            UserRoles userRoles = (UserRoles) em.createQuery("SELECT ur FROM UserRoles ur WHERE ur.role.roleName = :roleName AND ur.user = :user")
+                   .setParameter("roleName", roleName)
+                    .setParameter("user", user)
+                    .getSingleResult();
+            return true;
         } catch (Exception e) {
-            return new ArrayList<>();
+            return false;
         }
     }
     

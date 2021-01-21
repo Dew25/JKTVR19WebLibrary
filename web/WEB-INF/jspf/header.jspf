@@ -33,7 +33,7 @@
             <a class="nav-link" href="listReaders">Список читателей</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="takeOnBookForm">Выдать книгу</a>
+            <a class="nav-link" href="takeOnBookForm">Взять книгу</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="returnBookForm">Вернуть книгу</a>
