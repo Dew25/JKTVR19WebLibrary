@@ -1,11 +1,17 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package servlets;
 
-import entity.Book;
 import entity.Reader;
+import entity.Role;
 import entity.User;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,28 +22,29 @@ import javax.servlet.http.HttpSession;
 import session.BookFacade;
 import session.HistoryFacade;
 import session.ReaderFacade;
+import session.RoleFacade;
+import session.UserFacade;
 import session.UserRolesFacade;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
-@WebServlet(name = "ManagerServlet", urlPatterns = {
-    "/addBook",
-    "/createBook",
-    "/editBookForm",
-    "/editBook",
-    
-        
+@WebServlet(name = "AdminServlet", urlPatterns = {
+    "/listReaders",
+    "/adminPanel",
+    "/addNewRole",
 })
-public class ManagerServlet extends HttpServlet {
+public class AdminServlet extends HttpServlet {
     @EJB
     private BookFacade bookFacade;
     @EJB
     private ReaderFacade readerFacade;
     @EJB
     private HistoryFacade historyFacade;
+    @EJB private UserFacade userFacade;
     @EJB private UserRolesFacade userRolesFacade;
+    @EJB private RoleFacade roleFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -63,7 +70,7 @@ public class ManagerServlet extends HttpServlet {
             request.getRequestDispatcher("/loginForm").forward(request, response);
             return;
         }
-        boolean isRole = userRolesFacade.isRole("MANAGER",authUser);
+        boolean isRole = userRolesFacade.isRole("ADMIN",authUser);
         if(!isRole){
             request.setAttribute("info", "У вас нет прав для доступа!");
             request.getRequestDispatcher("/loginForm").forward(request, response);
@@ -71,57 +78,35 @@ public class ManagerServlet extends HttpServlet {
         }
         String path = request.getServletPath();
         switch (path) {
-            case "/addBook":
-                request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
+            case "/listReaders":
+                List<Reader> listReaders = readerFacade.findAll();
+                request.setAttribute("listReaders", listReaders);
+                request.getRequestDispatcher("/WEB-INF/listReaders.jsp").forward(request, response);
                 break;
-            case "/createBook":
-                String name = request.getParameter("name");
-                String author = request.getParameter("author");
-                String publishedYear = request.getParameter("publishedYear");
-                if("".equals(name) || name == null
-                        || "".equals(author) || author == null
-                        || "".equals(publishedYear) || publishedYear == null){
-                    request.setAttribute("name", name);
-                    request.setAttribute("author", author);
-                    request.setAttribute("publishedYear", publishedYear);
-                    request.setAttribute("info", "Заполните все поля");
-                    request.getRequestDispatcher("/WEB-INF/addBookForm.jsp").forward(request, response);
+            case "/adminPanel":
+                Map<User,String> usersMap = new HashMap<>();
+                List<User> listUsers = userFacade.findAll();
+                for(User user : listUsers){
+                    usersMap.put(user, userRolesFacade.getTopRole(user));
+                }
+                request.setAttribute("usersMap", usersMap);
+                request.setAttribute("listRoles", roleFacade.findAll());
+                request.getRequestDispatcher("/WEB-INF/adminPanel.jsp").forward(request, response);
+                break;
+            case "/addNewRole":
+                String userId = request.getParameter("userId");
+                String roleId = request.getParameter("roleId");
+                if("".equals(userId) || userId == null
+                        || "".equals(roleId) || roleId == null){
+                    request.setAttribute("info", "Выберите все поля");
+                    request.getRequestDispatcher("/adminPanel").forward(request, response);
                     break;
                 }
-                Book book = new Book(name, author, publishedYear);
-                bookFacade.create(book);
-                request.setAttribute("info", "Книга \"" + book.getName() + "\" добавлена");
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                User user = userFacade.find(Long.parseLong(userId));
+                Role role = roleFacade.find(Long.parseLong(roleId));
+                userRolesFacade.setNewRole(role.getRoleName(), user);
+                request.getRequestDispatcher("/adminPanel").forward(request, response);
                 break;
-            case "/editBookForm":
-                String bookId = request.getParameter("bookId");
-                book = bookFacade.find(Long.parseLong(bookId));
-                request.setAttribute("book", book);
-                request.getRequestDispatcher("/WEB-INF/editBookForm.jsp").forward(request, response);
-                break;
-            case "/editBook":
-                bookId = request.getParameter("bookId");
-                name = request.getParameter("name");
-                author = request.getParameter("author");
-                publishedYear = request.getParameter("publishedYear");
-                if("".equals(name) || name == null
-                        || "".equals(author) || author == null
-                        || "".equals(publishedYear) || publishedYear == null){
-                    request.setAttribute("info", "Поля не должны быть пустыми");
-                    request.getRequestDispatcher("/editBookForm").forward(request, response);
-                    break;
-                }
-                book = bookFacade.find(Long.parseLong(bookId));
-                book.setName(name);
-                book.setAuthor(author);
-                book.setPublishedYear(publishedYear);
-                bookFacade.edit(book);
-                request.setAttribute("bookId", bookId);
-                request.setAttribute("info", "Книга отредактирована");
-                request.getRequestDispatcher("/editBookForm").forward(request, response);
-                break;
-            
-            
         }
     }
 

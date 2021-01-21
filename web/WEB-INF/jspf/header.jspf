@@ -39,6 +39,9 @@
             <a class="nav-link" href="returnBookForm">Вернуть книгу</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="adminPanel">Панель администратора</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="loginForm">Вход</a>
           </li>
           <li class="nav-item">
