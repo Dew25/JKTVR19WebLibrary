@@ -81,7 +81,7 @@ public class AdminServlet extends HttpServlet {
             case "/listReaders":
                 List<Reader> listReaders = readerFacade.findAll();
                 request.setAttribute("listReaders", listReaders);
-                request.getRequestDispatcher("/WEB-INF/listReaders.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.page.getString("listReadersPage")).forward(request, response);
                 break;
             case "/adminPanel":
                 Map<User,String> usersMap = new HashMap<>();
@@ -92,7 +92,7 @@ public class AdminServlet extends HttpServlet {
                 }
                 request.setAttribute("usersMap", usersMap);
                 request.setAttribute("listRoles", roleFacade.findAll());
-                request.getRequestDispatcher("/WEB-INF/adminPanel.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.page.getString("adminPanelPage")).forward(request, response);
                 break;
             case "/addNewRole":
                 String userId = request.getParameter("userId");
@@ -100,13 +100,20 @@ public class AdminServlet extends HttpServlet {
                 if("".equals(userId) || userId == null
                         || "".equals(roleId) || roleId == null){
                     request.setAttribute("info", "Выберите все поля");
+                    request.setAttribute("roleId", roleId);
+                    request.setAttribute("userId", userId);
                     request.getRequestDispatcher("/adminPanel").forward(request, response);
                     break;
                 }
                 User user = userFacade.find(Long.parseLong(userId));
                 Role role = roleFacade.find(Long.parseLong(roleId));
+                request.setAttribute("info", "Изменение успешно");
                 if(!"admin".equals(user.getLogin())){
                     userRolesFacade.setNewRole(role.getRoleName(), user);
+                }else{
+                    request.setAttribute("info", "Изменение невозможно");
+                    request.setAttribute("roleId", roleId);
+                    request.setAttribute("userId", userId);
                 }
                 request.getRequestDispatcher("/adminPanel").forward(request, response);
                 break;
