@@ -87,6 +87,7 @@ public class AdminServlet extends HttpServlet {
                 Map<User,String> usersMap = new HashMap<>();
                 List<User> listUsers = userFacade.findAll();
                 for(User user : listUsers){
+                   // if("admin".equals(user.getLogin())) continue;
                     usersMap.put(user, userRolesFacade.getTopRole(user));
                 }
                 request.setAttribute("usersMap", usersMap);
@@ -104,7 +105,9 @@ public class AdminServlet extends HttpServlet {
                 }
                 User user = userFacade.find(Long.parseLong(userId));
                 Role role = roleFacade.find(Long.parseLong(roleId));
-                userRolesFacade.setNewRole(role.getRoleName(), user);
+                if(!"admin".equals(user.getLogin())){
+                    userRolesFacade.setNewRole(role.getRoleName(), user);
+                }
                 request.getRequestDispatcher("/adminPanel").forward(request, response);
                 break;
         }

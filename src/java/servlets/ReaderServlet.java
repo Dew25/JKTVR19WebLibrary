@@ -41,6 +41,7 @@ import javax.servlet.http.HttpSession;
 import session.BookFacade;
 import session.HistoryFacade;
 import session.ReaderFacade;
+import session.UserFacade;
 import session.UserRolesFacade;
 
 /**
@@ -53,6 +54,8 @@ import session.UserRolesFacade;
     "/takeOnBook",
     "/returnBookForm",
     "/returnBook",
+    "/profileForm",
+    "/setNewProfile",
     
 })
 public class ReaderServlet extends HttpServlet {
@@ -63,6 +66,7 @@ public class ReaderServlet extends HttpServlet {
     @EJB
     private HistoryFacade historyFacade;
     @EJB private UserRolesFacade userRolesFacade;
+    @EJB private UserFacade userFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -127,6 +131,43 @@ public class ReaderServlet extends HttpServlet {
                 historyFacade.edit(history);
                 request.setAttribute("info", "Книга \""+history.getBook().getName()+"\" возвращена в библиотеку");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
+                break;
+            case "/profileForm":
+                User user = userFacade.find(authUser.getId());
+                request.setAttribute("user",user);
+                request.getRequestDispatcher("/WEB-INF/profileForm.jsp").forward(request, response);
+                break;
+            case "/setNewProfile":
+                String userId = request.getParameter("userId");
+                String firstname = request.getParameter("firstname");
+                String lastname = request.getParameter("lastname");
+                String phone = request.getParameter("phone");
+                String password1 = request.getParameter("password1");
+                String password2 = request.getParameter("password2");
+                if(!password1.equals(password2)){
+                    request.setAttribute("info", "Не совпадают пароли");
+                    request.getRequestDispatcher("/profileForm").forward(request, response);
+                    break;
+                }
+                if("".equals(userId) || userId == null
+                        || "".equals(firstname) || firstname == null
+                        || "".equals(lastname) || lastname == null
+                        || "".equals(phone) || phone == null){
+                    request.setAttribute("info", "Заполните все поля");
+                    request.getRequestDispatcher("/profileForm").forward(request, response);
+                    break;
+                }
+                user = userFacade.find(Long.parseLong(userId));
+                reader = readerFacade.find(user.getReader().getId());
+                if(!"".equals(password1)) user.setPassword(password1);
+                reader.setFirstname(firstname);
+                reader.setLastname(lastname);
+                reader.setPhone(phone);
+                readerFacade.edit(reader);
+                userFacade.edit(user);
+                httpSession.setAttribute("user", user);
+                request.setAttribute("info", "Профиль изменен");
+                request.getRequestDispatcher("/profileForm").forward(request, response);
                 break;
         }
     }
