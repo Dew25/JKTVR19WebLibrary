@@ -25,6 +25,7 @@ import session.ReaderFacade;
 import session.RoleFacade;
 import session.UserFacade;
 import session.UserRolesFacade;
+import tools.EncryptPassword;
 
 /**
  *
@@ -46,6 +47,7 @@ public class LoginServlet extends HttpServlet {
     @EJB private RoleFacade roleFacade;
     @EJB private UserRolesFacade userRolesFacade;
     @EJB private BookFacade bookFacade;
+    EncryptPassword enctyptPassword = new EncryptPassword();
     
     public static final ResourceBundle pathToJsp = ResourceBundle.getBundle("property.pathToJsp");
 
@@ -55,7 +57,9 @@ public class LoginServlet extends HttpServlet {
         if(userFacade.findAll().size() > 0) return;
         Reader reader = new Reader("Ivan", "Ivanov", "565456565");
         readerFacade.create(reader);
-        User user = new User("admin", "12345", reader);
+        String salt = enctyptPassword.createSalt();
+        String hashPassword = enctyptPassword.createHash("12345", salt);
+        User user = new User("admin", hashPassword, salt, reader);
         userFacade.create(user);
         
         Role role = new Role("ADMIN");
@@ -93,6 +97,7 @@ public class LoginServlet extends HttpServlet {
         String path = request.getServletPath();
         switch (path) {
             case "/loginForm":
+                request.setAttribute("active", "login");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("login")).forward(request, response);
                 break;
             case "/login":
@@ -104,7 +109,8 @@ public class LoginServlet extends HttpServlet {
                     request.getRequestDispatcher("/loginForm").forward(request, response);
                     break;
                 }
-                if(!password.equals(user.getPassword())){
+                String hashPassword = enctyptPassword.createHash(password, user.getSalt());
+                if(!hashPassword.equals(user.getPassword())){
                     request.setAttribute("info", "Неправильный логин или пароль");
                     request.getRequestDispatcher("/loginForm").forward(request, response);
                     break;
@@ -112,6 +118,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession httpSession = request.getSession(true);
                 httpSession.setAttribute("user", user);
                 request.setAttribute("info", "Вы вошли как " + user.getLogin());
+                request.setAttribute("active", "index");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             case "/logout":
@@ -123,6 +130,7 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             case "/registrationForm":
+                request.setAttribute("active", "registration");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("registration")).forward(request, response);
                 break;
             case "/registration":
@@ -146,17 +154,20 @@ public class LoginServlet extends HttpServlet {
                 }
                 Reader reader = new Reader(firstname, lastname, phone);
                 readerFacade.create(reader);
-                user = new User(login, password, reader);
+                String salt = enctyptPassword.createSalt();
+                hashPassword = enctyptPassword.createHash(password, salt);
+                user = new User(login, hashPassword, salt, reader);
                 userFacade.create(user);
                 Role role = roleFacade.findByName("READER");
                 UserRoles userRoles = new UserRoles(role, user);
                 userRolesFacade.create(userRoles);
                 request.setAttribute("info", "Читатель \"" + reader.getFirstname() +" "+ reader.getLastname()+ "\" добавлен");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
-                break;    
+                break;        
             case "/listBooks":
                 List<Book> listBooks = bookFacade.findAll();
                 request.setAttribute("listBooks", listBooks);
+                request.setAttribute("active", "listBooks");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("listBooks")).forward(request, response);
                 break;    
         }
