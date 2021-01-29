@@ -27,6 +27,8 @@ import session.UserRolesFacade;
     "/createBook",
     "/editBookForm",
     "/editBook",
+    "/uploadFileForm",
+    
     
         
 })
@@ -120,7 +122,10 @@ public class ManagerServlet extends HttpServlet {
                 request.setAttribute("info", "Книга отредактирована");
                 request.getRequestDispatcher("/editBookForm").forward(request, response);
                 break;
-            
+            case "/uploadFileForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("uploadForm")).forward(request, response);
+                
+                break;
             
         }
     }
