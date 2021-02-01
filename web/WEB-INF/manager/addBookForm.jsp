@@ -21,6 +21,12 @@
         Название книги: <input type="text" name="name" value="${name}"><br>
         Автор книги: <input type="text" name="author" value="${author}"><br>
         Год издания книги: <input type="text" name="publishedYear" value="${publishedYear}"><br>
+        Файл обложки: <select name="bookFileId">
+          <c:forEach var="bookFile" items="${listBookFile}">
+              <option value="${bookFile.id}">${bookFile.description}</option>
+          </c:forEach>
+        </select>
+        <br>
         <input type="submit" name="submit" value="Добавить книгу">
     </form>
   </body>

@@ -2,6 +2,8 @@
 package servlets;
 
 import entity.Book;
+import entity.BookFile;
+import entity.BookFilesList;
 import entity.Reader;
 import entity.User;
 import java.io.IOException;
@@ -14,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import session.BookFacade;
+import session.BookFileFacade;
+import session.BookFilesListFacade;
 import session.HistoryFacade;
 import session.ReaderFacade;
 import session.UserRolesFacade;
@@ -40,6 +44,8 @@ public class ManagerServlet extends HttpServlet {
     @EJB
     private HistoryFacade historyFacade;
     @EJB private UserRolesFacade userRolesFacade;
+    @EJB private BookFileFacade bookFileFacade;
+    @EJB private BookFilesListFacade bookFilesListFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -80,18 +86,24 @@ public class ManagerServlet extends HttpServlet {
                 String name = request.getParameter("name");
                 String author = request.getParameter("author");
                 String publishedYear = request.getParameter("publishedYear");
+                String bookFileId = request.getParameter("bookFileId");
                 if("".equals(name) || name == null
                         || "".equals(author) || author == null
-                        || "".equals(publishedYear) || publishedYear == null){
+                        || "".equals(publishedYear) || publishedYear == null
+                        || "".equals(bookFileId) || bookFileId == null){
                     request.setAttribute("name", name);
                     request.setAttribute("author", author);
                     request.setAttribute("publishedYear", publishedYear);
+                    request.setAttribute("bookFileId", bookFileId);
                     request.setAttribute("info", "Заполните все поля");
                     request.getRequestDispatcher("/addBook").forward(request, response);
                     break;
                 }
+                BookFile bookFile = bookFileFacade.find(Long.parseLong(bookFileId));
                 Book book = new Book(name, author, publishedYear);
                 bookFacade.create(book);
+                BookFilesList bookFilesList = new BookFilesList(book, bookFile);
+                bookFilesListFacade.create(bookFilesList);
                 request.setAttribute("info", "Книга \"" + book.getName() + "\" добавлена");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
