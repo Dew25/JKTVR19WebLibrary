@@ -20,6 +20,20 @@
             Название книги: <input type="text" name="name" value="${book.name}"><br>
             Автор книги: <input type="text" name="author" value="${book.author}"><br>
             Год издания книги: <input type="text" name="publishedYear" value="${book.publishedYear}"><br>
+            Файл обложки: 
+            <select name="pictureId">
+                <c:forEach var="picture" items="${listPictures}">
+                    <option value="${picture.id}" <c:if test="${picture.id eq selectedPictureId}">selected</c:if>>${picture.description}</option>
+                </c:forEach>
+            </select>
+            <br>
+            Текст книги: 
+            <select name="textId">
+                <c:forEach var="text" items="${listTexts}">
+                    <option value="${text.id}" <c:if test="${text.id eq selectedTextId}">selected</c:if>>${text.description}</option>
+                </c:forEach>
+            </select>
+            <br>
             <input type="submit" name="submit" value="Изменить">
         </form>
     </body>

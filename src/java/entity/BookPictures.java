@@ -17,21 +17,21 @@ import javax.persistence.Id;
  * @author jvm
  */
 @Entity
-public class BookFile implements Serializable {
+public class BookPictures implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String path;
-    private String description;
+    private Book book;
+    private Picture picture;
 
-    public BookFile() {
+    public BookPictures() {
     }
 
-    public BookFile(String path, String description) {
-        this.path = path;
-        this.description = description;
+    public BookPictures(Book book, Picture picture) {
+        this.book = book;
+        this.picture = picture;
     }
 
     public Long getId() {
@@ -42,28 +42,28 @@ public class BookFile implements Serializable {
         this.id = id;
     }
 
-    public String getPath() {
-        return path;
+    public Book getBook() {
+        return book;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
-    public String getDescription() {
-        return description;
+    public Picture getPicture() {
+        return picture;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPicture(Picture picture) {
+        this.picture = picture;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + Objects.hashCode(this.id);
-        hash = 41 * hash + Objects.hashCode(this.path);
-        hash = 41 * hash + Objects.hashCode(this.description);
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.id);
+        hash = 53 * hash + Objects.hashCode(this.book);
+        hash = 53 * hash + Objects.hashCode(this.picture);
         return hash;
     }
 
@@ -78,14 +78,14 @@ public class BookFile implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final BookFile other = (BookFile) obj;
-        if (!Objects.equals(this.path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(this.description, other.description)) {
-            return false;
-        }
+        final BookPictures other = (BookPictures) obj;
         if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.book, other.book)) {
+            return false;
+        }
+        if (!Objects.equals(this.picture, other.picture)) {
             return false;
         }
         return true;
@@ -93,13 +93,8 @@ public class BookFile implements Serializable {
 
     @Override
     public String toString() {
-        return "BookFile{" 
-                + "id=" + id 
-                + ", path=" + path 
-                + ", description=" + description 
-                + '}';
+        return "BookPictures{" + "id=" + id + ", book=" + book + ", picture=" + picture + '}';
     }
-
 
     
 }

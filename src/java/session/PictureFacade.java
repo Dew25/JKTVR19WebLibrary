@@ -5,17 +5,21 @@
  */
 package session;
 
-import entity.BookFile;
+import entity.Book;
+import entity.Picture;
+import entity.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
 @Stateless
-public class BookFileFacade extends AbstractFacade<BookFile> {
+public class PictureFacade extends AbstractFacade<Picture> {
 
     @PersistenceContext(unitName = "JKTVR19WebLibraryPU")
     private EntityManager em;
@@ -25,8 +29,9 @@ public class BookFileFacade extends AbstractFacade<BookFile> {
         return em;
     }
 
-    public BookFileFacade() {
-        super(BookFile.class);
+    public PictureFacade() {
+        super(Picture.class);
     }
+
     
 }

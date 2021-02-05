@@ -2,9 +2,10 @@
 package servlets;
 
 import entity.Book;
-import entity.BookFile;
-import entity.BookFilesList;
-import entity.Reader;
+import entity.BookPictures;
+import entity.BookTexts;
+import entity.Picture;
+import entity.Text;
 import entity.User;
 import java.io.IOException;
 import java.util.List;
@@ -16,10 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import session.BookFacade;
-import session.BookFileFacade;
-import session.BookFilesListFacade;
+import session.BookPicturesFacade;
+import session.BookTextsFacade;
 import session.HistoryFacade;
+import session.PictureFacade;
 import session.ReaderFacade;
+import session.TextFacade;
 import session.UserRolesFacade;
 
 /**
@@ -31,7 +34,11 @@ import session.UserRolesFacade;
     "/createBook",
     "/editBookForm",
     "/editBook",
-    "/uploadFileForm",
+    "/picturesBookUrlForm",
+    "/saveUrlToPicturesBook",
+    "/textsBookUrlForm",
+    "/saveUrlToTextsBook",
+    
     
     
         
@@ -44,8 +51,10 @@ public class ManagerServlet extends HttpServlet {
     @EJB
     private HistoryFacade historyFacade;
     @EJB private UserRolesFacade userRolesFacade;
-    @EJB private BookFileFacade bookFileFacade;
-    @EJB private BookFilesListFacade bookFilesListFacade;
+    @EJB private TextFacade textFacade;
+    @EJB private PictureFacade pictureFacade;
+    @EJB private BookTextsFacade bookTextsFacade;
+    @EJB private BookPicturesFacade bookPicturesFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -80,30 +89,40 @@ public class ManagerServlet extends HttpServlet {
         String path = request.getServletPath();
         switch (path) {
             case "/addBook":
+                List<Picture> listPictures = pictureFacade.findAll();
+                request.setAttribute("listPictures", listPictures);
+                List<Text> listTexts = textFacade.findAll();
+                request.setAttribute("listTexts", listTexts);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addBook")).forward(request, response);
                 break;
             case "/createBook":
                 String name = request.getParameter("name");
                 String author = request.getParameter("author");
                 String publishedYear = request.getParameter("publishedYear");
-                String bookFileId = request.getParameter("bookFileId");
+                String pictureId = request.getParameter("pictureId");
+                String textId = request.getParameter("textId");
                 if("".equals(name) || name == null
                         || "".equals(author) || author == null
                         || "".equals(publishedYear) || publishedYear == null
-                        || "".equals(bookFileId) || bookFileId == null){
+                        || "".equals(pictureId) || pictureId == null
+                        || "".equals(textId) || textId == null){
                     request.setAttribute("name", name);
                     request.setAttribute("author", author);
                     request.setAttribute("publishedYear", publishedYear);
-                    request.setAttribute("bookFileId", bookFileId);
+                    request.setAttribute("selectedPictureId", pictureId);
+                    request.setAttribute("selectedTextId", textId);
                     request.setAttribute("info", "Заполните все поля");
                     request.getRequestDispatcher("/addBook").forward(request, response);
                     break;
                 }
-                BookFile bookFile = bookFileFacade.find(Long.parseLong(bookFileId));
+                Picture picture = pictureFacade.find(Long.parseLong(pictureId));
+                Text text = textFacade.find(Long.parseLong(textId));
                 Book book = new Book(name, author, publishedYear);
                 bookFacade.create(book);
-                BookFilesList bookFilesList = new BookFilesList(book, bookFile);
-                bookFilesListFacade.create(bookFilesList);
+                BookPictures bookPictures = new BookPictures(book, picture);
+                bookPicturesFacade.create(bookPictures);
+                BookTexts bookTexts = new BookTexts(book, text);
+                bookTextsFacade.create(bookTexts);
                 request.setAttribute("info", "Книга \"" + book.getName() + "\" добавлена");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
@@ -111,6 +130,14 @@ public class ManagerServlet extends HttpServlet {
                 String bookId = request.getParameter("bookId");
                 book = bookFacade.find(Long.parseLong(bookId));
                 request.setAttribute("book", book);
+                picture = bookPicturesFacade.findPictureByBook(book);
+                request.setAttribute("selectedPictureId", picture.getId());
+                text = bookTextsFacade.findTextByBook(book);
+                request.setAttribute("selectedTextId", text.getId());
+                listPictures = pictureFacade.findAll();
+                request.setAttribute("listPictures", listPictures);
+                listTexts = textFacade.findAll();
+                request.setAttribute("listTexts", listTexts);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("editBook")).forward(request, response);
                 break;
             case "/editBook":
@@ -118,14 +145,30 @@ public class ManagerServlet extends HttpServlet {
                 name = request.getParameter("name");
                 author = request.getParameter("author");
                 publishedYear = request.getParameter("publishedYear");
+                pictureId = request.getParameter("pictureId");
+                textId = request.getParameter("textId");
                 if("".equals(name) || name == null
+                        || "".equals(bookId) || bookId == null
+                        || "".equals(name) || name == null
                         || "".equals(author) || author == null
-                        || "".equals(publishedYear) || publishedYear == null){
+                        || "".equals(publishedYear) || publishedYear == null
+                        || "".equals(pictureId) || pictureId == null
+                        || "".equals(textId) || textId == null){
+                    request.setAttribute("name", name);
+                    request.setAttribute("author", author);
+                    request.setAttribute("publishedYear", publishedYear);
+                    request.setAttribute("selectedPictureId", pictureId);
+                    request.setAttribute("selectedTextId", textId);
+                    request.setAttribute("info", "Заполните все поля");
                     request.setAttribute("info", "Поля не должны быть пустыми");
                     request.getRequestDispatcher("/editBookForm").forward(request, response);
                     break;
                 }
                 book = bookFacade.find(Long.parseLong(bookId));
+                picture = pictureFacade.find(Long.parseLong(pictureId));
+                bookPicturesFacade.replacePicture(picture, book);
+                text = textFacade.find(Long.parseLong(textId));
+                bookTextsFacade.replaceText(text, book);
                 book.setName(name);
                 book.setAuthor(author);
                 book.setPublishedYear(publishedYear);
@@ -134,11 +177,49 @@ public class ManagerServlet extends HttpServlet {
                 request.setAttribute("info", "Книга отредактирована");
                 request.getRequestDispatcher("/editBookForm").forward(request, response);
                 break;
-            case "/uploadFileForm":
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("uploadForm")).forward(request, response);
-                
+            case "/picturesBookUrlForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("picturesBookUrlForm")).forward(request, response);
                 break;
-            
+            case "/saveUrlToPicturesBook":
+                // Получаем массив строк с описаниями файлов
+                String[] descriptions = request.getParameterValues("descriptions");
+                String[] urls = request.getParameterValues("urls");
+                if(descriptions == null || descriptions.length == 0
+                       || urls == null || urls.length == 0){
+                    request.setAttribute("info", "Заполните описание изображения и вставьте url");
+                    request.getRequestDispatcher("/addBook").forward(request, response);
+                    return;
+                }
+                for(int i = 0; i < urls.length; i++){
+                    if("".equals(urls[i])) continue;
+                    picture = new Picture(descriptions[i]+" (url)", null, urls[i]);
+                    pictureFacade.create(picture);
+                }
+                request.setAttribute("info", "Изображения по url добавлены");
+                request.getRequestDispatcher("/addBook").forward(request, response);
+                break;
+            case "/textsBookUrlForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("textsBookUrlForm")).forward(request, response);
+                break;
+            case "/saveUrlToTextsBook":
+                // Получаем массив строк с описаниями файлов
+                descriptions = request.getParameterValues("descriptions");
+                urls = request.getParameterValues("urls");
+                if(descriptions == null || descriptions.length == 0
+                        || urls == null || urls.length == 0){
+                    request.setAttribute("info", "Заполните хотя бы одну пару: описание и url");
+                    request.getRequestDispatcher("/addBook").forward(request, response);
+                    return;
+                }
+                
+                for(int i = 0; i < urls.length; i++){
+                    if("".equals(urls[i])) continue;
+                    text = new Text(descriptions[i]+" (url)", null, urls[i]);
+                    textFacade.create(text);
+                }
+                request.setAttribute("info", "Тексты по url добавлены");
+                request.getRequestDispatcher("/addBook").forward(request, response);
+                break;
         }
     }
 

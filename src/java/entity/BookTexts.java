@@ -14,24 +14,24 @@ import javax.persistence.Id;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
 @Entity
-public class BookFilesList implements Serializable {
+public class BookTexts implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Book book;
-    private BookFile bookFile;
+    private Text text;
 
-    public BookFilesList() {
+    public BookTexts() {
     }
 
-    public BookFilesList(Book book, BookFile bookFile) {
+    public BookTexts(Book book, Text text) {
         this.book = book;
-        this.bookFile = bookFile;
+        this.text = text;
     }
 
     public Long getId() {
@@ -50,20 +50,20 @@ public class BookFilesList implements Serializable {
         this.book = book;
     }
 
-    public BookFile getBookFile() {
-        return bookFile;
+    public Text getText() {
+        return text;
     }
 
-    public void setBookFile(BookFile bookFile) {
-        this.bookFile = bookFile;
+    public void setText(Text text) {
+        this.text = text;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(this.id);
-        hash = 61 * hash + Objects.hashCode(this.book);
-        hash = 61 * hash + Objects.hashCode(this.bookFile);
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.id);
+        hash = 67 * hash + Objects.hashCode(this.book);
+        hash = 67 * hash + Objects.hashCode(this.text);
         return hash;
     }
 
@@ -78,14 +78,14 @@ public class BookFilesList implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final BookFilesList other = (BookFilesList) obj;
+        final BookTexts other = (BookTexts) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         if (!Objects.equals(this.book, other.book)) {
             return false;
         }
-        if (!Objects.equals(this.bookFile, other.bookFile)) {
+        if (!Objects.equals(this.text, other.text)) {
             return false;
         }
         return true;
@@ -93,11 +93,12 @@ public class BookFilesList implements Serializable {
 
     @Override
     public String toString() {
-        return "BookFilesList{" 
+        return "BookTexts{" 
                 + "id=" + id 
                 + ", book=" + book.getName()
-                + ", bookFile=" + bookFile.getDescription()
+                + ", text=" + text.getDescription()
                 + '}';
     }
-   
+
+    
 }

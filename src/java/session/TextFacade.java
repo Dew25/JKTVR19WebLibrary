@@ -5,17 +5,19 @@
  */
 package session;
 
-import entity.BookFilesList;
+import entity.Reader;
+import entity.Text;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Melnikov
+ * @author jvm
  */
 @Stateless
-public class BookFilesListFacade extends AbstractFacade<BookFilesList> {
+public class TextFacade extends AbstractFacade<Text> {
 
     @PersistenceContext(unitName = "JKTVR19WebLibraryPU")
     private EntityManager em;
@@ -25,8 +27,12 @@ public class BookFilesListFacade extends AbstractFacade<BookFilesList> {
         return em;
     }
 
-    public BookFilesListFacade() {
-        super(BookFilesList.class);
+    public TextFacade() {
+        super(Text.class);
+    }
+
+    public List<Text> findByReader(Reader reader) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

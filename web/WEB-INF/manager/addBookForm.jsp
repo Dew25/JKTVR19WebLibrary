@@ -16,14 +16,23 @@
     <p>${info}</p>
     <br>
     <a href="index.jsp">Home</a><br>
-    <p><a href="uploadFileForm">Загрузить файл</a></p>
+    <p><a href="picturesBookUploadForm">Загрузить файл обложки книги на сервер</a></p>
+    <p><a href="picturesBookUrlForm">Загрузить изображение обложки книги из сети</a></p>
+    <p><a href="textsBookUploadForm">Загрузить файл с текстом книги на сервер</a></p>
+    <p><a href="textsBookUrlForm">Загрузить текст книги из сети</a></p>
     <form action="createBook" method="POST">
         Название книги: <input type="text" name="name" value="${name}"><br>
         Автор книги: <input type="text" name="author" value="${author}"><br>
         Год издания книги: <input type="text" name="publishedYear" value="${publishedYear}"><br>
-        Файл обложки: <select name="bookFileId">
-          <c:forEach var="bookFile" items="${listBookFile}">
-              <option value="${bookFile.id}">${bookFile.description}</option>
+        Файл обложки: <select name="pictureId">
+          <c:forEach var="picture" items="${listPictures}">
+              <option value="${picture.id}" <c:if test="${picture.id eq selectedPictureId}">selected</c:if>>${picture.description}</option>
+          </c:forEach>
+        </select>
+        <br>
+        Текст книги: <select name="textId">
+          <c:forEach var="text" items="${listTexts}">
+              <option value="${text.id}" <c:if test="${text.id eq selectedTextId}">selected</c:if>>${text.description}</option>
           </c:forEach>
         </select>
         <br>
