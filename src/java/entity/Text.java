@@ -5,6 +5,7 @@
  */
 package entity;
 
+import interfaces.BookFilesInterface;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ import javax.persistence.Id;
  * @author Melnikov
  */
 @Entity
-public class Text implements Serializable {
+public class Text implements Serializable, BookFilesInterface {
 
     private static final long serialVersionUID = 1L;
     @Id

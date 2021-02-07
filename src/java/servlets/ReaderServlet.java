@@ -25,12 +25,16 @@
 package servlets;
 
 import entity.Book;
+import entity.BookPictures;
 import entity.History;
 import entity.Reader;
 import entity.User;
+import interfaces.BookFilesInterface;
 import java.io.IOException;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import session.BookFacade;
+import session.BookPicturesFacade;
 import session.HistoryFacade;
 import session.ReaderFacade;
 import session.UserFacade;
@@ -67,6 +72,7 @@ public class ReaderServlet extends HttpServlet {
     private HistoryFacade historyFacade;
     @EJB private UserRolesFacade userRolesFacade;
     @EJB private UserFacade userFacade;
+    @EJB private BookPicturesFacade bookPicturesFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -102,6 +108,13 @@ public class ReaderServlet extends HttpServlet {
         switch (path) {
             
             case "/takeOnBookForm":
+                List<History> listReadBooks = historyFacade.findReadBook(authUser.getReader());
+                Map<Book,BookFilesInterface> booksMap = new HashMap<>();
+                for(History history : listReadBooks){
+                    BookPictures bookPictures = bookPicturesFacade.find(history.getBook().getId());
+                    booksMap.put(history.getBook(), bookPictures.getPicture());
+                }
+                request.setAttribute("booksMap", booksMap);
                 List<Book> listBooks = bookFacade.findAll();
                 request.setAttribute("listBooks", listBooks);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("takeOnBook")).forward(request, response);
@@ -116,7 +129,7 @@ public class ReaderServlet extends HttpServlet {
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             case "/returnBookForm":
-                List<History> listReadBooks = historyFacade.findReadBook(authUser.getReader());
+                listReadBooks = historyFacade.findReadBook(authUser.getReader());
                 request.setAttribute("listReadBooks", listReadBooks);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("returnBook")).forward(request, response);
                 break;    

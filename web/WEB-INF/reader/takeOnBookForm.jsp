@@ -27,5 +27,21 @@
         <br><br>
         <input type="submit" value="Взять книгу">
     </form>
+    <div class="row">
+        
+            <c:forEach var="entry" items="${booksMap}">
+                <div class="col">
+                    <div class="card" style="width: 10rem;">
+                        <img src="insertFile/${entry.value.pathToFile}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">${entry.key.name}</h5>
+                          <p class="card-text">${entry.key.author}</p>
+                          <a href="editBookForm?bookId=${entry.key.id}" class="btn btn-primary">Редактировать</a>
+                        </div>
+                    </div> 
+                </div>
+            </c:forEach>
+       
+    </div>
   </body>
 </html>
