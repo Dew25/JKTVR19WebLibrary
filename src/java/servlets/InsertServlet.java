@@ -61,6 +61,7 @@ public class InsertServlet extends HttpServlet {
                                                              +"\"");
         BufferedInputStream input = null;
         BufferedOutputStream output = null;
+        
         try {
             input = new BufferedInputStream(new FileInputStream(file),DEFAULT_BUFFER_SIZE);
             output = new BufferedOutputStream(response.getOutputStream(),DEFAULT_BUFFER_SIZE);

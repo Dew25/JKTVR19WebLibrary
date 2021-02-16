@@ -5,7 +5,6 @@
  */
 package servlets;
 
-import entity.BookPictures;
 import entity.Picture;
 import entity.Text;
 import entity.User;
@@ -36,10 +35,15 @@ import session.UserRolesFacade;
  * @author Melnikov
  */
 @WebServlet(name = "UploadServlet", urlPatterns = {
-    "/picturesBookUploadForm",
-    "/uploadPucturesBook",
-    "/textsBookUploadForm",
-    "/uploadTextsBook",
+    "/picturesUploadForm",
+    "/picturesUpload",
+    "/picturesUrlForm",
+    "/picturesUrl",
+    "/textUploadForm",
+    "/textUpload",
+    "/textUrlForm",
+    "/textUrl",
+    
 })
 @MultipartConfig()
 public class UploadServlet extends HttpServlet {
@@ -83,23 +87,37 @@ public class UploadServlet extends HttpServlet {
         StringBuilder typeUploadFile = new StringBuilder();;
         String path = request.getServletPath();
         switch (path) {
-            case "/picturesBookUploadForm":
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("picturesBookUploadForm")).forward(request, response);
+            case "/picturesUploadForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("picturesUploadForm")).forward(request, response);
                 return;
-            case "/uploadPucturesBook":
+            case "/picturesUpload":
                 typeUploadFile.append("Picture");
                 setPathToUploadFiles(request, typeUploadFile.toString());
                 break;
-            case "/textsBookUploadForm":
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("textsBookUploadForm")).forward(request, response);
+            case "/picturesUrlForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("picturesUrlForm")).forward(request, response);
                 return;
-            case "/uploadTextsBook":
+            case "/picturesUrl":
+                String[] desctriptions = request.getParameterValues("description");
+                String[] urls = request.getParameterValues("url");
+                Picture picture = null;
+                for(int i=0;i<urls.length;i++){
+                    if(urls[i] == null || "".equals(urls[i])) continue;
+                    picture = new Picture(desctriptions[i]+" (url)", null, urls[i]);
+                    pictureFacade.create(picture);
+                }
+                request.getRequestDispatcher("/addBook").forward(request, response);
+                return;
+            case "/textUploadForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("textUploadForm")).forward(request, response);
+                return;
+            case "/textUpload":
                 typeUploadFile.append("Text");
                 setPathToUploadFiles(request, typeUploadFile.toString());
                 break;
         }
         // Получаем массив строк с описаниями файлов
-        String[] descriptions = request.getParameterValues("descriptions");
+        String[] descriptions = request.getParameterValues("description");
         if(descriptions == null || descriptions.length == 0){
             request.setAttribute("info", "Заполните описание файла");
             request.getRequestDispatcher("/addBook").forward(request, response);
@@ -157,8 +175,7 @@ public class UploadServlet extends HttpServlet {
                      .append(readerId)
                      .append(File.separator)
                      .append(folderName);
-        // Создаем цепочку вложенных директорий
-        new File(uploadFolder.toString()).mkdirs();
+        
         // получаем список екземпляров класса Part инициированного веб контейнером
         // в нем описан поток загрузки файла (их может быть больше 1, если мы загружаем сразу несколько файлов)
         List<Part> fileParts = request
@@ -176,16 +193,20 @@ public class UploadServlet extends HttpServlet {
                             .append(File.separator)
                             .append(fileName);// формируем путь к сохраняемому файлу
             File file = new File(pathToUploadFile.toString()); // создаем объект класса File, 
-                                                               // для получения екземпляра класса Path для параметра методу Files.copy 
+                                                               //связанный с файлом на ж. диске, куда будем загружать байты
+            file.mkdirs(); // Создаем цепочку вложенных директорий, ведущих к файлу, если еще ее нет
             try(InputStream fileContent = filePart.getInputStream()){ // получаем ресурс - поток данных загружаемого файла
                 Files.copy(
-                        fileContent, // потод данных
+                        fileContent, // поток данных
                         file.toPath(), // путь сохранения файла
                         StandardCopyOption.REPLACE_EXISTING // опция: пересоздать файл, если такой уже есть на диске.
                 );
             }
-            pathToUploadFiles.add(pathToUploadFile.toString());// список путей к файлу (обрабатывается в processRequest())
+            pathToUploadFiles.add(pathToUploadFile.toString());// список путей к файлу (поле обрабатывается в processRequest())
         }
+        
+    }
+    private void setPathUrl(HttpServletRequest request){
         
     }
 

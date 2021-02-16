@@ -34,10 +34,7 @@ import session.UserRolesFacade;
     "/createBook",
     "/editBookForm",
     "/editBook",
-    "/picturesBookUrlForm",
-    "/saveUrlToPicturesBook",
-    "/textsBookUrlForm",
-    "/saveUrlToTextsBook",
+  
     
     
     
@@ -182,8 +179,8 @@ public class ManagerServlet extends HttpServlet {
                 break;
             case "/saveUrlToPicturesBook":
                 // Получаем массив строк с описаниями файлов
-                String[] descriptions = request.getParameterValues("descriptions");
-                String[] urls = request.getParameterValues("urls");
+                String[] descriptions = request.getParameterValues("description");
+                String[] urls = request.getParameterValues("fileName");
                 if(descriptions == null || descriptions.length == 0
                        || urls == null || urls.length == 0){
                     request.setAttribute("info", "Заполните описание изображения и вставьте url");

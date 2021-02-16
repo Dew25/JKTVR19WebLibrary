@@ -16,10 +16,10 @@
     <p>${info}</p>
     <br>
     <a href="index.jsp">Home</a><br>
-    <p><a href="picturesBookUploadForm">Загрузить файл обложки книги на сервер</a></p>
-    <p><a href="picturesBookUrlForm">Загрузить изображение обложки книги из сети</a></p>
-    <p><a href="textsBookUploadForm">Загрузить файл с текстом книги на сервер</a></p>
-    <p><a href="textsBookUrlForm">Загрузить текст книги из сети</a></p>
+    <p><a href="picturesUploadForm">Загрузить файл обложки книги на сервер</a></p>
+    <p><a href="picturesUrlForm">Загрузить изображение обложки книги из сети</a></p>
+    <p><a href="textUploadForm">Загрузить файл с текстом книги на сервер</a></p>
+    <p><a href="textUrlForm">Загрузить текст книги из сети</a></p>
     <form action="createBook" method="POST">
         Название книги: <input type="text" name="name" value="${name}"><br>
         Автор книги: <input type="text" name="author" value="${author}"><br>
