@@ -98,12 +98,17 @@ public class UploadServlet extends HttpServlet {
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("picturesUrlForm")).forward(request, response);
                 return;
             case "/picturesUrl":
-                String[] desctriptions = request.getParameterValues("description");
+                String[] descriptions = request.getParameterValues("description");
                 String[] urls = request.getParameterValues("url");
+                if(descriptions == null || descriptions.length < urls.length){
+                    request.setAttribute("info", "Заполните описание файла");
+                    request.getRequestDispatcher("/addBook").forward(request, response);
+                    return;
+                }
                 Picture picture = null;
                 for(int i=0;i<urls.length;i++){
                     if(urls[i] == null || "".equals(urls[i])) continue;
-                    picture = new Picture(desctriptions[i]+" (url)", null, urls[i]);
+                    picture = new Picture(descriptions[i]+" (url)", null, urls[i]);
                     pictureFacade.create(picture);
                 }
                 request.getRequestDispatcher("/addBook").forward(request, response);
@@ -115,10 +120,29 @@ public class UploadServlet extends HttpServlet {
                 typeUploadFile.append("Text");
                 setPathToUploadFiles(request, typeUploadFile.toString());
                 break;
+            case "/textUrlForm":
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("textUrlForm")).forward(request, response);
+                return;
+            case "/textUrl":
+                descriptions = request.getParameterValues("description");
+                urls = request.getParameterValues("url");
+                if(descriptions == null || descriptions.length < urls.length){
+                    request.setAttribute("info", "Заполните описание файла");
+                    request.getRequestDispatcher("/addBook").forward(request, response);
+                    return;
+                }
+                Text text = null;
+                for(int i=0;i<urls.length;i++){
+                    if(urls[i] == null || "".equals(urls[i])) continue;
+                    text = new Text(descriptions[i]+" (url)", null, urls[i]);
+                    textFacade.create(text);
+                }
+                request.getRequestDispatcher("/addBook").forward(request, response);
+                return;
         }
         // Получаем массив строк с описаниями файлов
         String[] descriptions = request.getParameterValues("description");
-        if(descriptions == null || descriptions.length == 0){
+        if(descriptions == null || descriptions.length < pathToUploadFiles.size()){
             request.setAttribute("info", "Заполните описание файла");
             request.getRequestDispatcher("/addBook").forward(request, response);
             return;
@@ -130,7 +154,7 @@ public class UploadServlet extends HttpServlet {
                     pictureFacade.create(pictures);
                     break;
                 case "Text":
-                    Text text = new Text(descriptions[i]+" (file)", pathToUploadFiles.get(i), null);
+                    Text text = new Text(descriptions[i]+" (file)", null, pathToUploadFiles.get(i));
                     textFacade.create(text);
                     break;
             }
