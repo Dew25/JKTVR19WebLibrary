@@ -12,3 +12,4 @@
   <body>
     <div class="container">
     <c:import url="/WEB-INF/menu/menu.jsp"></c:import>
+    <div class=" w-100 my-2 text-info text-center">${info}Привет&nbsp;</div>
