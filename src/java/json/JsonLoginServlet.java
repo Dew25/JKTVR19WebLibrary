@@ -19,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import session.ReaderFacade;
 import session.UserFacade;
 import session.UserRolesFacade;
@@ -30,7 +31,9 @@ import tools.EncryptPassword;
  */
 @WebServlet(name = "JsonLoginServlet", urlPatterns = {
     "/registrationUserJson",
-    
+    "/loginJson",
+    "/logoutJson",
+        
 })
 public class JsonLoginServlet extends HttpServlet {
     @EJB private ReaderFacade readerFacade;
@@ -98,6 +101,59 @@ public class JsonLoginServlet extends HttpServlet {
                 job.add("requestStatus","true");     
                 JsonObject jsonResponse = job.build();
                 json = jsonResponse.toString();
+                break;
+            case "/loginJson":
+                jsonReader = Json.createReader(request.getReader());
+                jsonObject = jsonReader.readObject();
+                login = jsonObject.getString("login","");
+                password = jsonObject.getString("password","");
+                if(login == null || "".equals(login)
+                        || password == null || "".equals(password)){
+                    job = Json.createObjectBuilder();
+                    json=job.add("requestStatus", "false")
+                        .add("info", "Нет такого пользователя")
+                        .build()
+                        .toString();
+                    break;
+                }
+                User loginUser = userFacade.findByLogin(login);
+                if(loginUser == null){
+                   job = Json.createObjectBuilder();
+                    json=job.add("requestStatus", "false")
+                        .add("info", "Нет такого пользователя")
+                        .build()
+                        .toString();
+                    break; 
+                }
+                EncryptPassword ep = new EncryptPassword();
+                password = ep.createHash(password, loginUser.getSalt());
+                if(!password.equals(loginUser.getPassword())){
+                    job = Json.createObjectBuilder();
+                    json=job.add("requestStatus", "false")
+                        .add("info", "Нет такого пользователя")
+                        .build()
+                        .toString();
+                    break; 
+                }
+                HttpSession session = request.getSession(true);
+                job = Json.createObjectBuilder();
+                json=job.add("requestStatus", "true")
+                        .add("info", "Вы вошли как "+loginUser.getLogin())
+                        .add("token", session.getId())
+                        .add("role", userRolesFacade.getTopRole(loginUser))
+                        .build()
+                        .toString();
+                break;
+            case "/logoutJson":
+                session = request.getSession(false);
+                if(session != null){
+                    session.invalidate();
+                    job = Json.createObjectBuilder();
+                    json=job.add("requestStatus", "true")
+                        .add("info", "Вы вышли")
+                        .build()
+                        .toString();
+                }
                 break;
         }
         if(json == null || "".equals(json)){

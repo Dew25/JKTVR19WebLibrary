@@ -11,6 +11,7 @@ import entity.UserRoles;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -97,5 +98,7 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
             this.create(userRoles);
         }
     }
+
+    
     
 }
