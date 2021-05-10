@@ -33,36 +33,56 @@
       </nav>
       <div id="info">&nbsp;</div>
       <div id="context">
-        <div class="w-50 mx-auto">
-          <div class="h3 w-50 mx-auto my-5">Добавить читателя</div>
-          
-          <div class="row">
-            <div class="col g-2">
-              <input type="text" id="firstname" class="form-control" placeholder="First name" aria-label="First name">
-            </div>
-            <div class="col g-2">
-              <input type="text" id="lastname" class="form-control" placeholder="Last name" aria-label="Last name">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 g-2">
-              <input type="text" id="phone" class="form-control" placeholder="Phone" aria-label="Phone">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col g-2">
-              <input type="text" id="login" class="form-control" placeholder="Login" aria-label="Login">
-            </div>
-            <div class="col g-2">
-              <input type="text" id="password" class="form-control" placeholder="Password" aria-label="Password">
-            </div>
-          </div>
-          <div class="row my-3">
-            <div class="col g-2">
-              <input type="button" id="btnCreateUser" class="form-control bg-primary text-white" value="Зарегистрировать">
-            </div>
-          </div>
+        <h3 class="w-100 text-center my-5 ">Добавить новую книгу</h3>
+      <form id="bookForm" method="POST" enctype="multipart/form-data">
+      <div class="row w-50 my-2 mx-auto">
+        <div class="col-4 text-end">
+            Название книги 
         </div>
+        <div class="col-8 text-start ">
+          <input class="w-100" type="text" name="name" id="name">
+        </div>
+      </div>
+      <div class="row w-50 my-2 mx-auto">
+        <div class="col-4 text-end">
+          Автор книги 
+        </div>
+        <div class="col-8 text-start">  
+          <input class="col-8" type="text" name="author" id="author">
+        </div>
+      </div>
+      <div class="row w-50 my-2 mx-auto">
+        <div class="col-4 text-end">   
+            Год издания книги 
+        </div>
+        <div class="col-8 text-start">  
+          <input class="col-4" type="text" name="publishedYear" id="publishedYear">
+        </div>
+      </div>
+      <div class="row w-50 my-2 mx-auto">
+        <div class="col-4 text-end">
+            Загрузите обложку 
+        </div>
+        <div class="col-8 text-start">     
+            <input class="form-control col" type="file" name="file" id="file-cover">
+        </div>
+      </div>
+      <div class="row w-50 my-2 mx-auto">
+        <div class="col-4 text-end">
+            Текст книги 
+        </div>
+        <div class="col-8 text-start">     
+          <input class="form-control" type="file" name="file" id="file-text">
+        </div>
+      </div>
+      <div class="row w-50 my-2 mx-auto">
+      <div class="col-4 text-end">
+      </div>
+      <div class="col-8 text-start mt-3">     
+        <input class="w-50 bg-primary text-white" type="submit" id="btnAddBook" name="submit" value="Добавить">
+      </div>
+    </div>
+    </form>
         
       </div>
     </div>
