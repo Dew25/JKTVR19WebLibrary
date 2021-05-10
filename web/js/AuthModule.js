@@ -1,4 +1,5 @@
 import { userModule } from "./UserModule.js";
+import { bookModule } from "./BookModule.js";
 
 class AuthModule{
     printLoginForm(){
@@ -59,7 +60,6 @@ class AuthModule{
             document.getElementById('info').innerHTML = result.info;
             console.log("Request status: "+result.requestStatus);
             document.getElementById('context').innerHTML='';
-            authModule.toogleMenu();
             if(result.requestStatus){
                 sessionStorage.setItem('token', result.token);
                 sessionStorage.setItem('role', result.role);
@@ -69,6 +69,7 @@ class AuthModule{
                     sessionStorage.removeItem('role');
                 }
             }
+            authModule.toogleMenu();
         }
 
     }
@@ -86,7 +87,7 @@ class AuthModule{
         if(role === null){
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('addBook').style.display = 'none';
-            document.getElementById('listBooks').style.display = 'none';
+            document.getElementById('listBooks').style.display = 'block';
             document.getElementById('aRegistration').style.display = 'none';
             document.getElementById('listReaders').style.display = 'none';
             document.getElementById('takeOnBook').style.display = 'none';
@@ -144,6 +145,7 @@ class AuthModule{
             if(result.requestStatus){
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('role');
+                bookModule.printListBooks();
             }
         }
         authModule.toogleMenu();

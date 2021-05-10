@@ -5,13 +5,11 @@
  */
 package session;
 
-import entity.Role;
 import entity.User;
 import entity.UserRoles;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
