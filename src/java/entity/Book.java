@@ -25,11 +25,7 @@ public class Book implements Serializable{
     private String name;
     private String author;
     private Integer publishedYear;
-    private int price;
-    @OneToOne
-    private Picture cover;
-    @OneToOne
-    private Text text;
+    
 
     public Book() {
     }

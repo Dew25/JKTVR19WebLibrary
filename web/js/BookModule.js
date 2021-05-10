@@ -53,7 +53,7 @@ class BookModule{
       </form>
         `;
         document.getElementById('btnAddBook').onclick = function(){
-            bookModule.creteBook();
+            bookModule.createBook();
         }
     }
     async createBook(){

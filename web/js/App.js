@@ -1,4 +1,5 @@
  import {authModule} from './AuthModule.js';
+ import {bookModule} from './BookModule.js';
 
  document.getElementById("addBook").onclick = function(){
      document.getElementById('info').innerHTML='&nbsp;';
