@@ -89,7 +89,7 @@ class AuthModule{
             document.getElementById('addBook').style.display = 'none';
             document.getElementById('listBooks').style.display = 'block';
             document.getElementById('aRegistration').style.display = 'none';
-            document.getElementById('listReaders').style.display = 'none';
+            document.getElementById('listUsers').style.display = 'none';
             document.getElementById('takeOnBook').style.display = 'none';
             document.getElementById('returnBook').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'none';
@@ -100,7 +100,7 @@ class AuthModule{
             document.getElementById('addBook').style.display = 'none';
             document.getElementById('listBooks').style.display = 'block';
             document.getElementById('aRegistration').style.display = 'none';
-            document.getElementById('listReaders').style.display = 'none';
+            document.getElementById('listUsers').style.display = 'none';
             document.getElementById('takeOnBook').style.display = 'block';
             document.getElementById('returnBook').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
@@ -112,7 +112,7 @@ class AuthModule{
             document.getElementById('addBook').style.display = 'block';
             document.getElementById('listBooks').style.display = 'block';
             document.getElementById('aRegistration').style.display = 'none';
-            document.getElementById('listReaders').style.display = 'none';
+            document.getElementById('listUsers').style.display = 'none';
             document.getElementById('takeOnBook').style.display = 'block';
             document.getElementById('returnBook').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
@@ -124,7 +124,7 @@ class AuthModule{
             document.getElementById('addBook').style.display = 'block';
             document.getElementById('listBooks').style.display = 'block';
             document.getElementById('aRegistration').style.display = 'block';
-            document.getElementById('listReaders').style.display = 'block';
+            document.getElementById('listUsers').style.display = 'block';
             document.getElementById('takeOnBook').style.display = 'block';
             document.getElementById('returnBook').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'block';

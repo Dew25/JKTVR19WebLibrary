@@ -71,6 +71,7 @@ class UserModule{
     const count = listUsers.length;
     let context = document.getElementById('context');
     context.innerHTML = '';
+    //вставляем заголовок таблицы
     context.insertAdjacentHTML('beforeend',
       `<h3 class="w-100 my-5 text-center">Список читателей</h3>
         <p class="">Всего пользователей: ${count}</p>
@@ -92,11 +93,49 @@ class UserModule{
           </tbody>
          </table>
         `);
+    // tbody может быть несколько в документе, т.е. это коллекция элементов, поэтому берем элемент с индексом 0
     let tbody = document.getElementById('tableListUsers')
       .getElementsByTagName('tbody')[0];
-    for (let users of listUsers) {
-      
-    }
+    let i = 1;
+    let userId = null;
+    //Формируем строки с данными для каждого пользователя
+    for (let user of listUsers) {//массив содержит объекты User {id,login,reader,role}, где reader тоже объект {id, firstname, lastname, phone}
+      let row = document.createElement('tr'); // строка для заполнения в этом цикле
+      let td = document.createElement('td'); // первая колонка
+      td.appendChild(document.createTextNode(i+1));//заполняем колонку порядковым номером пользователя
+      row.appendChild(td); //добавляем колонку в строку
+      for(let userField in user){ // проходим по полям объекта user
+        let td = document.createElement('td');
+        if(userField === 'id') userId = user[userField]; // запоминаем id во внешнюю переменную, которую будем использовать при создании oncklick кнопки
+        if(userField === 'reader'){
+          for(let readerField in user[userField]){// проходим по полям читателя
+            if (readerField === 'id') continue; // пропускаем поле id
+            td = document.createElement('td'); // остальные поля используем 
+            td.appendChild(document.createTextNode(user[userField][readerField]));//вставка значения в колонку
+            row.appendChild(td); // добавление очередной колонки в строку
+          }
+        }else{
+          td.appendChild(document.createTextNode(user[userField])); // эта строка инициирует колонку полями user
+          row.appendChild(td); // которые добавляются к строке.
+        }
+      }
+      td = document.createElement('td');
+      td.appendChild(document.createTextNode('Yes')); // в этой колонке имитируется активность пользователя. Пока не реализована функция
+      row.appendChild(td);
+      td = document.createElement('td'); // в этой колонке будет span в виде кнопки
+      let span = document.createElement('span');
+      span.classList.add('btn');
+      span.classList.add('text-white');
+      span.classList.add('bg-primary');
+      span.classList.add('p-2');
+      span.appendChild(document.createTextNode('Изменить'));
+      span.onckick = function(){ // навешиваем событие oncklick на span 
+        userModule.changeUser(userId);
+      }
+      td.appendChild(span)//добавляем span в ячейку колонки
+      row.appendChild(td); // и добавляем кнопку в строку
+      tbody.appendChild(row); // вставляем заполненную колонками строку в html документ
+    }// конец цикла заполняющего строку данными объекта user
   }
   async getListUsers() {
     let response = await fetch('listUsersJson', {
