@@ -65,7 +65,52 @@ class UserModule{
         }else{
             console.log("Error: Ошибка сервера");
         }
+  }
+  async printListUsers() {
+    const listUsers = await userModule.getListUsers();
+    const count = listUsers.length;
+    let context = document.getElementById('context');
+    context.innerHTML = '';
+    context.insertAdjacentHTML('beforeend',
+      `<h3 class="w-100 my-5 text-center">Список читателей</h3>
+        <p class="">Всего пользователей: ${count}</p>
+        <table id="tableListUsers" class="table table-striped">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Id</th>
+              <th>Логин</th>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Телефон</th>
+              <th>Роль</th>
+              <th>Активность</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+         </table>
+        `);
+    let tbody = document.getElementById('tableListUsers')
+      .getElementsByTagName('tbody')[0];
+    for (let users of listUsers) {
+      
     }
+  }
+  async getListUsers() {
+    let response = await fetch('listUsersJson', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json;charset:utf-8' }
+    });
+    if (response.ok) {
+      let result = await response.json();
+      return result.listUsers;
+    } else {
+      document.getElementById('info').innerHTML = 'Ошибка сервера';
+      return null;
+    }
+  }
 }
 const userModule = new UserModule();
 export {userModule};

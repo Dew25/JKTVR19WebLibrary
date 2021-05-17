@@ -8,7 +8,6 @@ package json.builders;
 import entity.Book;
 import entity.Picture;
 import entity.Text;
-import java.math.BigDecimal;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -30,8 +29,9 @@ public class JsonBookBuilder {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("id", book.getId())
                 .add("name", book.getName())
-                .add("publishedYear", book.getPublishedYear())
+                .add("author", book.getAuthor())
                 .add("picture", jsonPictureBuilder.build())
+                .add("publishedYear", book.getPublishedYear())
                 .add("text", jsonTextBuilder.build());
         return job.build();
     }

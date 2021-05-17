@@ -5,12 +5,17 @@
  */
 package json;
 
+import entity.Book;
+import entity.Picture;
 import entity.Reader;
+import entity.Text;
 import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -20,6 +25,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import json.builders.JsonBookBuilder;
+import session.BookFacade;
+import session.BookPicturesFacade;
+import session.BookTextsFacade;
 import session.ReaderFacade;
 import session.UserFacade;
 import session.UserRolesFacade;
@@ -33,12 +42,16 @@ import tools.EncryptPassword;
     "/registrationUserJson",
     "/loginJson",
     "/logoutJson",
+    "/listBooksJson",
         
 })
 public class JsonLoginServlet extends HttpServlet {
     @EJB private ReaderFacade readerFacade;
+    @EJB private BookFacade bookFacade;
     @EJB private UserFacade userFacade;
     @EJB private UserRolesFacade userRolesFacade;
+    @EJB private BookPicturesFacade bookPicturesFacade;
+    @EJB private BookTextsFacade bookTextsFacade;
     
     private EncryptPassword encryptPassword = new EncryptPassword();
     
@@ -154,6 +167,16 @@ public class JsonLoginServlet extends HttpServlet {
                         .build()
                         .toString();
                 }
+                break;
+            case "/listBooksJson":
+                List<Book> listBooks = bookFacade.findAll();
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+                listBooks.forEach((book)->{
+                    Picture picture = bookPicturesFacade.findPictureByBook(book);
+                    Text text = bookTextsFacade.findTextByBook(book);
+                    jab.add(new JsonBookBuilder().createJsonBook(book, picture, text));
+                });
+                json = jab.build().toString();
                 break;
         }
         if(json == null || "".equals(json)){

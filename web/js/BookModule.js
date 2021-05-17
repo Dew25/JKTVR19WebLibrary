@@ -78,12 +78,66 @@ class BookModule{
             document.getElementById('info').innerHTML='Ошибка сервера';
         }
     }
-    printListBooks(){
-        console.log('Сработал метод printListBook()');
-        document.getElementById('info').innerHTML = '&nbsp;'
-        document.getElementById('context').innerHTML = ''
-
+  async printListBooks() {
+    const listBooks = await bookModule.getListBooks();
+    let context = document.getElementById('context');
+    context.innerHTML = '<h3 class="w-100 text-center my-5 ">Список книг</h3>';
+    let divForCards = document.createElement('div');
+    divForCards.classList.add('w-100');
+    divForCards.classList.add('d-flex');
+    divForCards.classList.add('justify-content-center');
+    context.insertAdjacentElement('beforeend', divForCards);
+    for (let book of listBooks) {
+      let card = document.createElement('div');
+      card.classList.add('card');
+      card.classList.add('m-2');
+      card.style.cssText = 'max-width: 12rem; max-height: 25rem; border: 0';
+      let img = document.createElement('img');
+      img.classList.add('card-img-top');
+      img.style.cssText = 'max-width: 12rem; max-height: 15rem';
+      img.setAttribute('src', 'insertFile/'+book.picture.url);
+      card.insertAdjacentElement('beforeend', img);
+      card.insertAdjacentHTML('beforeend',
+        `<div class="card-body">
+            <h5 class="card-title">${book.name}</h5>
+            <p class="card-text">${book.author}</p>
+            <p class="card-text">${book.publishedYear}</p>
+            <p class="card-text">ISBN: ${book.isbn}</p>
+            <p class="card-text">Цена: ${book.price}</p>
+            <p class="card-text"> 
+              <span id='btnReadBook${book.id}' class="btn btn-primary">Читать</span>
+              <span id='btnBuyBook${book.id}' class="btn btn-primary">Купить</span>
+          </p>
+          </div>`
+          );
+      divForCards.insertAdjacentElement('beforeend', card);
+      document.getElementById('btnReadBook'+book.id).onclick = function () {
+        bookModule.readBook(book.id);
+      }
+      document.getElementById('btnBuyBook'+book.id).onclick = function () {
+        bookModule.buyBook(book.id);
+      }
     }
+  }
+  async getListBooks() {
+    let response = await fetch('listBooksJson', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json;charset:utf-8' }
+    });
+    if (response.ok) {
+      let result = await response.json();
+      return result;
+    } else {
+      document.getElementById('info').innerHTML = 'Ошибка сервера';
+      return null;
+    }
+  }
+  readBook(id) {
+    alert('bookId=' + id);
+  }
+  buyBook(id) {
+    alert('bookId=' + id);
+  }
 }
 let bookModule = new BookModule();
 export {bookModule};
